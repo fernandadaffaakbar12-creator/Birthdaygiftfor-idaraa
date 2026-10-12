@@ -175,7 +175,7 @@
         const pinPopupClose = document.getElementById('pin-popup-close');
 
         // DEFAULT PIN: Silakan ubah angka ini jika ingin PIN lain
-        const SECRET_PIN = "2104";
+        const SECRET_PIN = "0108";
 
         let pinAttempt = 0;
         let popupTimeout = null;
@@ -429,7 +429,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 // D. JIKA YANG DIKLIK ADALAH GALERI CINTA
                 else {
                     modalImg.src = this.src;
-                    modalImg.style.aspectRatio = "9 / 16";
+                    const card = this.closest('.scratch-card');
+                    if ((card && card.classList.contains('scratch-card-landscape')) || this.src.includes('6.jpeg') || this.src.includes('7.jpeg')) {
+                        modalImg.style.aspectRatio = "3 / 2";
+                    } else {
+                        modalImg.style.aspectRatio = "9 / 16";
+                    }
                 }
 
                 modal.classList.add('show-modal');
@@ -765,8 +770,22 @@ document.addEventListener('DOMContentLoaded', () => {
         let drawMoveCount = 0;
 
         setTimeout(() => {
-            canvas.width = 220;
-            canvas.height = Math.round(220 * 16 / 9);
+            const card = canvas.closest('.scratch-card');
+            const isLandscape = (card && card.classList.contains('scratch-card-landscape')) || index >= 5;
+
+            if (isLandscape) {
+                // Rasio 3:2 untuk foto 6 & 7
+                const w = (card && card.offsetWidth) ? card.offsetWidth : 360;
+                canvas.width = Math.round(w);
+                canvas.height = Math.round(w * 2 / 3);
+                brushRadius = 30;
+            } else {
+                // Rasio 9:16 untuk foto 1-5
+                const w = (card && card.offsetWidth) ? card.offsetWidth : 220;
+                canvas.width = Math.round(w);
+                canvas.height = Math.round(w * 16 / 9);
+                brushRadius = 25;
+            }
 
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
